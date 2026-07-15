@@ -1,0 +1,6 @@
+{
+  "name": "VitalEarth",
+  "description": "Earth's vital signs tracking dashboard visualizing climate metrics, ocean acidity, deforestation, and real-time air quality indicators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

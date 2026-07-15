@@ -1,0 +1,2357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VitalEarth — Earth's vital signs. Live.</title>
+    <!-- Google Fonts CDN -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+    
+    <style>
+      :root {
+        --deep: #010f1a;
+        --ocean: #021a2e;
+        --navy: #042C53;
+        --steel: #0C447C;
+        --teal: #1D9E75;
+        --teal-mid: #5DCAA5;
+        --teal-pale: #9FE1CB;
+        --green-dark: #27500A;
+        --red: #E24B4A;
+        --amber: #EF9F27;
+        --white: #F0F4F8;
+        --muted: #8BAFC7;
+      }
+
+      /* Global Reset & Base Styling */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 60px;
+        background-color: var(--deep);
+        color: var(--white);
+        font-family: 'Inter', sans-serif;
+      }
+      
+      body {
+        overflow-x: hidden;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--deep);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--steel);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--teal);
+      }
+
+      /* Typography Helper Classes */
+      h1, h2, h3 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+      
+      .text-pale-green {
+        color: var(--teal-pale) !important;
+      }
+
+      .section-title {
+        font-size: 28px;
+        text-align: center;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .section-sub {
+        font-size: 15px;
+        text-align: center;
+        color: var(--muted);
+        margin-bottom: 48px;
+        font-style: italic;
+      }
+
+      /* Intersection Observer Animations */
+      .reveal-section {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .reveal-section.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* STICKY NAVBAR */
+      nav {
+        position: sticky;
+        top: 0;
+        background-color: #010f1a;
+        border-bottom: 1px solid #0C447C;
+        z-index: 100;
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        height: 60px;
+      }
+      
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .pulsing-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--teal);
+        animation: pulse-dot 1.5s infinite;
+      }
+      
+      @keyframes pulse-dot {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 158, 117, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(29, 158, 117, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(29, 158, 117, 0); }
+      }
+      
+      .brand {
+        font-size: 18px;
+        font-weight: 600;
+        color: #FFFFFF;
+        text-decoration: none;
+        letter-spacing: -0.5px;
+      }
+      
+      .nav-center {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      
+      .nav-center a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s ease;
+      }
+      
+      .nav-center a:hover {
+        color: var(--white);
+      }
+      
+      .nav-divider {
+        color: var(--steel);
+        font-weight: bold;
+      }
+      
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .blinking-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--teal);
+        animation: blink 1s steps(2, start) infinite;
+      }
+      
+      @keyframes blink {
+        to { visibility: hidden; }
+      }
+      
+      .clock-text {
+        font-family: 'Inter', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--teal-pale);
+      }
+      
+      .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: var(--white);
+        font-size: 24px;
+        cursor: pointer;
+        outline: none;
+      }
+      
+      .mobile-dropdown {
+        display: none;
+        flex-direction: column;
+        background-color: #010f1a;
+        border-bottom: 1px solid #0C447C;
+        padding: 16px 24px;
+        gap: 12px;
+        transition: all 0.3s ease;
+      }
+      
+      .mobile-dropdown a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(12, 68, 124, 0.2);
+      }
+      
+      .mobile-dropdown a:last-child {
+        border-bottom: none;
+      }
+      
+      .mobile-dropdown a:hover {
+        color: var(--white);
+      }
+
+      /* SECTION 2 — HERO */
+      #hero {
+        background-color: var(--ocean);
+        min-height: calc(100vh - 60px);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 24px 96px 24px;
+      }
+      
+      .hero-quote-wrap {
+        text-align: center;
+        margin-bottom: 30px;
+        opacity: 0;
+        animation: fade-in-quote 1.5s ease-out forwards;
+      }
+      
+      .hero-quote-1 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 36px;
+        color: #FFFFFF;
+        margin-bottom: 4px;
+      }
+      
+      .hero-quote-2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 36px;
+        color: var(--teal-mid);
+      }
+      
+      @keyframes fade-in-quote {
+        from { opacity: 0; transform: translateY(-15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* EARTH GLOBE & RINGS */
+      .globe-container {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        margin: 30px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .globe-rotate {
+        width: 280px;
+        height: 280px;
+        animation: spin 30s linear infinite;
+        border-radius: 50%;
+        box-shadow: 0 0 40px rgba(12, 68, 124, 0.6);
+        background-color: var(--steel);
+      }
+      
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      
+      .globe-svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      
+      .ring-wrapper {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+      }
+      
+      .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        transform-origin: center;
+      }
+      
+      .ring-1 {
+        border: 1.5px solid var(--teal);
+        animation: pulse-ring-1 3s infinite;
+      }
+      
+      .ring-2 {
+        border: 1px solid var(--teal-mid);
+        animation: pulse-ring-2 3s infinite 0.8s;
+      }
+      
+      .ring-3 {
+        border: 0.5px solid var(--teal-pale);
+        animation: pulse-ring-3 3s infinite 1.6s;
+      }
+      
+      @keyframes pulse-ring-1 {
+        0%, 100% { transform: scale(1.2); opacity: 0.5; }
+        50% { transform: scale(1.3); opacity: 0.1; }
+      }
+      
+      @keyframes pulse-ring-2 {
+        0%, 100% { transform: scale(1.4); opacity: 0.5; }
+        50% { transform: scale(1.52); opacity: 0.1; }
+      }
+      
+      @keyframes pulse-ring-3 {
+        0%, 100% { transform: scale(1.6); opacity: 0.5; }
+        50% { transform: scale(1.72); opacity: 0.1; }
+      }
+      
+      /* EARTH HEALTH SCORE */
+      .health-score-container {
+        position: relative;
+        text-align: center;
+        margin-top: 30px;
+        z-index: 10;
+      }
+      
+      .health-score-glow {
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        background: transparent;
+        z-index: -1;
+        animation: glow 3s infinite;
+      }
+      
+      @keyframes glow {
+        0%, 100% { box-shadow: 0 0 20px 10px rgba(226, 75, 74, 0.2); }
+        50% { box-shadow: 0 0 40px 20px rgba(226, 75, 74, 0.5); }
+      }
+      
+      .score-number {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        font-style: italic;
+        font-size: 72px;
+        color: var(--red);
+        line-height: 1;
+      }
+      
+      .score-total {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 32px;
+        color: var(--muted);
+      }
+      
+      .health-score-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--teal-mid);
+        margin-top: 8px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      
+      /* TICKER STRIP */
+      .ticker-wrap {
+        width: 100%;
+        background: #1a0808;
+        height: 36px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-top: 1px solid rgba(226, 75, 74, 0.25);
+        border-bottom: 1px solid rgba(226, 75, 74, 0.25);
+      }
+      
+      .ticker-content {
+        display: inline-block;
+        white-space: nowrap;
+        animation: ticker-anim 25s linear infinite;
+        color: var(--white);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+      }
+      
+      .ticker-content span {
+        display: inline-block;
+        padding-right: 30px;
+      }
+      
+      @keyframes ticker-anim {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-50%, 0, 0); }
+      }
+
+      /* SECTION 3 — VITAL STATS */
+      #overview {
+        background-color: var(--navy);
+        padding: 80px 24px;
+      }
+      
+      .cards-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 24px;
+      }
+      
+      .card {
+        background-color: var(--ocean);
+        border-left: 3px solid var(--teal);
+        border-radius: 10px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.7s ease, transform 0.7s ease;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      
+      .visible .card {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .card:nth-child(1) { transition-delay: 0s; }
+      .card:nth-child(2) { transition-delay: 0.1s; }
+      .card:nth-child(3) { transition-delay: 0.2s; }
+      .card:nth-child(4) { transition-delay: 0.3s; }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+      
+      .card-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--teal-pale);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+      
+      .card-value {
+        font-size: 36px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      
+      .card-value.red {
+        color: var(--red);
+      }
+      
+      .card-value.amber {
+        color: var(--amber);
+      }
+      
+      .card-sub {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      /* SECTION 4 — CLIMATE */
+      #climate {
+        background-color: var(--deep);
+        padding: 80px 24px;
+      }
+      
+      .heart {
+        display: inline-block;
+        color: var(--red);
+        animation: heartbeat 1.2s ease infinite;
+        margin-left: 8px;
+      }
+      
+      @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        14% { transform: scale(1.3); }
+        28% { transform: scale(1); }
+      }
+      
+      .climate-grid {
+        max-width: 1200px;
+        margin: 40px auto 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      
+      @media (min-width: 1024px) {
+        .climate-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      /* Bar Chart Layout */
+      .chart-container {
+        background-color: var(--ocean);
+        padding: 32px 24px 20px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        border: 1px solid rgba(12, 68, 124, 0.3);
+      }
+      
+      .bar-chart {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        height: 180px;
+        border-bottom: 1px solid var(--steel);
+        position: relative;
+        padding-top: 24px;
+      }
+      
+      .bar-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        margin: 0 4px;
+      }
+      
+      .bar {
+        width: 100%;
+        max-width: 32px;
+        height: 0;
+        border-radius: 4px 4px 0 0;
+        background-color: #185FA5;
+        transition: height 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .bar-7 {
+        background-color: var(--steel);
+      }
+      
+      .bar-8 {
+        background-color: var(--red);
+      }
+      
+      .bar-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      
+      .record-badge {
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--red);
+        letter-spacing: 0.5px;
+        background: rgba(226, 75, 74, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        border: 0.5px solid var(--red);
+        white-space: nowrap;
+      }
+      
+      .visible .bar {
+        height: var(--h);
+      }
+      
+      /* Progress bars */
+      .progress-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100%;
+      }
+      
+      .progress-item {
+        width: 100%;
+      }
+      
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      
+      .progress-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--white);
+      }
+      
+      .progress-value {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--teal-pale);
+      }
+      
+      .progress-track {
+        width: 100%;
+        height: 12px;
+        background-color: var(--ocean);
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid var(--steel);
+      }
+      
+      .progress-fill {
+        width: 0;
+        height: 100%;
+        border-radius: 6px;
+        transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .prog-1 {
+        background-color: var(--red);
+      }
+      
+      .prog-2 {
+        background-color: #378ADD;
+      }
+      
+      .visible .progress-fill {
+        width: var(--w);
+      }
+
+      /* SECTION 5 — OCEAN SOUL */
+      #ocean {
+        background-color: var(--ocean);
+        padding: 80px 0;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .ocean-header {
+        padding: 0 24px;
+      }
+      
+      /* Wave Animation */
+      .ocean-waves-container {
+        width: 100%;
+        height: 120px;
+        overflow: hidden;
+        position: relative;
+        background-color: var(--ocean);
+        margin: 40px 0;
+      }
+      
+      .wave-svg {
+        width: 2880px;
+        height: 100%;
+        display: block;
+      }
+      
+      .wave-path {
+        fill: none;
+        stroke-linecap: round;
+      }
+      
+      .wave-1 {
+        stroke: #1D9E75;
+        stroke-width: 2.5px;
+        animation: wave-anim 8s linear infinite;
+      }
+      
+      .wave-2 {
+        stroke: #0F6E56;
+        stroke-width: 1.5px;
+        opacity: 0.6;
+        animation: wave-anim 12s linear infinite reverse;
+      }
+      
+      .wave-3 {
+        stroke: #5DCAA5;
+        stroke-width: 1px;
+        opacity: 0.3;
+        animation: wave-anim 16s linear infinite;
+      }
+      
+      @keyframes wave-anim {
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-1440px, 0, 0); }
+      }
+      
+      /* Tiles */
+      .ocean-tiles-container {
+        padding: 0 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      .ocean-tiles {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+      
+      @media (min-width: 1024px) {
+        .ocean-tiles {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      
+      .ocean-tile {
+        background-color: var(--deep);
+        border-top: 2px solid var(--teal);
+        border-radius: 8px;
+        padding: 24px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border-left: 1px solid rgba(12, 68, 124, 0.15);
+        border-right: 1px solid rgba(12, 68, 124, 0.15);
+        border-bottom: 1px solid rgba(12, 68, 124, 0.15);
+      }
+      
+      .tile-label {
+        font-size: 13px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+      }
+      
+      .tile-value {
+        font-size: 18px;
+        font-weight: 600;
+      }
+      
+      .tile-value.red {
+        color: var(--red);
+      }
+      
+      .tile-value.amber {
+        color: var(--amber);
+      }
+      
+      .ocean-quote {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        color: var(--teal-pale);
+        text-align: center;
+        font-size: 18px;
+        line-height: 1.9;
+        max-width: 800px;
+        margin: 60px auto 0 auto;
+        padding: 0 24px;
+      }
+
+      /* SECTION 6 — FOREST HEARTBEAT */
+      #forest {
+        background-color: #0a1f0a;
+        padding: 80px 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      /* Falling Leaves */
+      .leaf {
+        position: absolute;
+        top: -20px;
+        width: 12px;
+        height: 16px;
+        border-radius: 50% 0;
+        background-color: #2d6a1a;
+        opacity: 0.7;
+        pointer-events: none;
+        animation: fall 8s ease-in infinite;
+      }
+      
+      @keyframes fall {
+        0% { transform: translateY(-20px) rotate(0deg); opacity: 0.8; }
+        100% { transform: translateY(650px) rotate(360deg); opacity: 0; }
+      }
+      
+      .forest-grid {
+        max-width: 1000px;
+        margin: 40px auto 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 48px;
+        align-items: center;
+      }
+      
+      @media (min-width: 768px) {
+        .forest-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      
+      .donut-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .donut-svg {
+        transform: rotate(0deg);
+      }
+      
+      .donut-ring {
+        transition: stroke-dasharray 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+        stroke-linecap: butt;
+      }
+      
+      .donut-green {
+        stroke-dasharray: 0 502;
+        stroke-dashoffset: 0;
+      }
+      
+      .donut-red {
+        stroke-dasharray: 0 502;
+        stroke-dashoffset: -346;
+      }
+      
+      .visible .donut-green {
+        stroke-dasharray: 346 502;
+      }
+      
+      .visible .donut-red {
+        stroke-dasharray: 156 502;
+      }
+      
+      .stats-block {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      
+      .forest-big-val {
+        font-size: 48px;
+        font-weight: 600;
+        color: var(--red);
+        line-height: 1.1;
+      }
+      
+      .forest-stat-sub {
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .forest-stat-sub.red-text {
+        color: var(--red);
+      }
+      
+      .forest-desc {
+        font-size: 15px;
+        color: var(--white);
+        margin-bottom: 6px;
+        font-weight: 300;
+      }
+      
+      /* Amazon rainforest alert */
+      .amazon-alert-container {
+        margin-top: 32px;
+        background-color: rgba(226, 75, 74, 0.08);
+        border: 1.5px solid rgba(226, 75, 74, 0.25);
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 400px;
+      }
+      
+      .amazon-alert-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      
+      .critical-badge {
+        background-color: var(--red);
+        color: var(--white);
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .amazon-alert-track {
+        width: 100%;
+        height: 10px;
+        background-color: #010f1a;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+      
+      .amazon-alert-fill {
+        width: 0;
+        height: 100%;
+        background-color: var(--red);
+        border-radius: 5px;
+        transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .visible .amazon-alert-fill {
+        width: var(--w);
+      }
+
+      /* SECTION 7 — AIR QUALITY */
+      #air {
+        background-color: #f8fafb;
+        padding: 80px 24px;
+      }
+      
+      .air-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .dark-text {
+        color: #010f1a !important;
+      }
+      
+      .dark-muted {
+        color: #555555 !important;
+        text-align: center;
+        margin-top: 8px;
+        margin-bottom: 48px;
+        font-style: italic;
+      }
+      
+      .air-rows {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .air-row {
+        display: grid;
+        grid-template-columns: 140px 1fr 180px;
+        align-items: center;
+        gap: 24px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .visible .air-row {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .city-name {
+        color: #010f1a;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      
+      .aqi-bar-container {
+        width: 100%;
+      }
+      
+      .aqi-bar-track {
+        width: 100%;
+        height: 8px;
+        background-color: #e2e8f0;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      
+      .aqi-bar-fill {
+        width: 0;
+        height: 100%;
+        border-radius: 4px;
+        transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+      }
+      
+      .visible .aqi-bar-fill {
+        width: var(--w);
+      }
+      
+      .status-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      .aqi-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        color: #FFFFFF;
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 50px;
+        text-align: center;
+      }
+      
+      .aqi-status {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      /* SECTION 8 — CALL TO ACTION */
+      #cta {
+        background-color: var(--ocean);
+        padding: 100px 24px;
+        text-align: center;
+      }
+      
+      .cta-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      
+      .cta-quote {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-weight: 700;
+        font-size: 32px;
+        color: #FFFFFF;
+        margin-bottom: 16px;
+        line-height: 1.4;
+      }
+      
+      .cta-sub {
+        font-family: 'Inter', sans-serif;
+        font-size: 16px;
+        color: var(--muted);
+        margin-bottom: 36px;
+      }
+      
+      .share-btn {
+        background: transparent;
+        border: 1.5px solid var(--teal);
+        color: var(--teal);
+        font-family: 'Inter', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        padding: 12px 32px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+      }
+      
+      .share-btn:hover {
+        background-color: var(--teal);
+        color: #FFFFFF;
+        box-shadow: 0 4px 15px rgba(29, 158, 117, 0.4);
+      }
+      
+      .last-updated {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 24px;
+        font-family: 'Inter', sans-serif;
+      }
+
+      /* SECTION 9 — FOOTER */
+      footer {
+        background-color: var(--deep);
+        border-top: 1px solid #0C447C;
+        padding: 24px;
+      }
+      
+      .footer-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      
+      @media (min-width: 768px) {
+        .footer-container {
+          flex-direction: row;
+        }
+      }
+      
+      .footer-left {
+        color: var(--muted);
+        font-size: 12px;
+        text-align: center;
+      }
+      
+      .footer-right {
+        color: var(--red);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      /* FLOATING PRESENT MODE BUTTON */
+      .present-btn {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background-color: var(--teal);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 24px;
+        padding: 10px 20px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        z-index: 500;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      }
+      
+      .present-btn:hover {
+        background-color: var(--teal-mid);
+        transform: scale(1.05);
+      }
+      
+      .present-btn:active {
+        transform: scale(0.95);
+      }
+      
+      .present-btn.active {
+        background-color: var(--red);
+      }
+      
+      .navbar-hidden {
+        transform: translateY(-100%);
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* TOAST ALERT FEEDBACK */
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translate(-50%, 50px);
+        background-color: var(--teal);
+        color: #FFFFFF;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 500;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        opacity: 0;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+        z-index: 1000;
+      }
+      
+      .toast.visible {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+
+      /* RESPONSIVE DESIGN BREAKPOINTS */
+      @media (max-width: 1024px) {
+        .nav-center {
+          display: none;
+        }
+        .hamburger-btn {
+          display: block;
+          margin-left: 12px;
+        }
+        .mobile-dropdown.open {
+          display: flex;
+        }
+      }
+      
+      @media (max-width: 767px) {
+        .hero-quote-1, .hero-quote-2 {
+          font-size: 24px;
+        }
+        
+        .globe-container {
+          width: 180px;
+          height: 180px;
+        }
+        
+        .globe-rotate {
+          width: 180px;
+          height: 180px;
+        }
+        
+        .ring-wrapper {
+          width: 180px;
+          height: 180px;
+        }
+        
+        @keyframes pulse-ring-1 {
+          0%, 100% { transform: scale(1.15); opacity: 0.5; }
+          50% { transform: scale(1.25); opacity: 0.1; }
+        }
+        
+        @keyframes pulse-ring-2 {
+          0%, 100% { transform: scale(1.3); opacity: 0.5; }
+          50% { transform: scale(1.4); opacity: 0.1; }
+        }
+        
+        @keyframes pulse-ring-3 {
+          0%, 100% { transform: scale(1.45); opacity: 0.5; }
+          50% { transform: scale(1.55); opacity: 0.1; }
+        }
+        
+        .ticker-content {
+          font-size: 12px;
+        }
+        
+        .cards-container {
+          grid-template-columns: 1fr;
+        }
+        
+        .ocean-tiles {
+          grid-template-columns: 1fr;
+        }
+        
+        .ocean-waves-container {
+          height: 60px;
+        }
+        
+        .air-row {
+          grid-template-columns: 1fr;
+          gap: 10px;
+          padding: 16px;
+          background: rgba(0,0,0,0.02);
+          border-radius: 8px;
+        }
+        
+        .present-btn {
+          bottom: 16px;
+          right: 16px;
+        }
+      }
+
+      /* ==========================================
+         Single Page Dashboard & Immersive UI Styles
+         ========================================== */
+      
+      /* Base mobile-first layout rules */
+      html, body {
+        height: 100vh !important;
+        overflow: hidden !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background-color: var(--deep) !important;
+      }
+
+      /* Mobile tabs bar (low-profile & responsive Segmented controls) */
+      .mobile-tabs-bar {
+        display: flex;
+        background-color: rgba(1, 15, 26, 0.95);
+        border-bottom: 1px solid var(--steel);
+        padding: 8px 16px;
+        overflow-x: auto;
+        white-space: nowrap;
+        gap: 8px;
+        z-index: 90;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        backdrop-filter: blur(10px);
+      }
+
+      .mobile-tabs-bar::-webkit-scrollbar {
+        display: none; /* Hide scrollbars for slick swiping on iOS/Android */
+      }
+
+      .mobile-tab-btn {
+        background: rgba(4, 44, 83, 0.4);
+        border: 1px solid rgba(12, 68, 124, 0.4);
+        color: var(--muted);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
+        flex-shrink: 0;
+      }
+
+      .mobile-tab-btn.active {
+        background-color: rgba(29, 158, 117, 0.2);
+        color: var(--teal-pale);
+        border-color: var(--teal);
+        box-shadow: 0 0 12px rgba(29, 158, 117, 0.3);
+      }
+
+      /* Mobile layout configurations (<1024px) */
+      .dashboard-main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: calc(100vh - 176px); /* Viewport height minus elements: 60px (nav) + 40px (tabs) + 36px (ticker) + 40px (footer) */
+        overflow: hidden;
+        background-color: var(--ocean);
+        padding: 12px;
+      }
+
+      .col-left, .col-center, .col-right {
+        display: none; /* Hide all columns by default on mobile */
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+      }
+
+      /* Active column gets displayed */
+      .col-left.active, .col-center.active, .col-right.active {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      /* Hide sections inside scrollable columns except the active section on mobile */
+      .col-left section, .col-right section {
+        display: none;
+      }
+
+      .col-left section.active-section, 
+      .col-right section.active-section,
+      .col-right section.active-section + #cta,
+      .col-right section#cta.active-section {
+        display: block !important;
+        margin: 0 !important;
+        width: 100% !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        background-color: var(--deep);
+        border: 1px solid var(--steel);
+      }
+
+      /* Adjust section styles inside the mobile column */
+      .col-left section.active-section, 
+      .col-right section.active-section {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* Desktop layout overrides (>=1024px) */
+      @media (min-width: 1024px) {
+        .mobile-tabs-bar {
+          display: none !important; /* Hide segmented controls on desktop */
+        }
+
+        .dashboard-main {
+          display: grid !important;
+          grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+          gap: 16px !important;
+          padding: 16px !important;
+          flex-direction: row !important;
+          height: calc(100vh - 136px) !important; /* No mobile-tabs-bar */
+        }
+
+        .col-left {
+          grid-column: span 3 / span 3 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 16px !important;
+          overflow-y: auto !important;
+          padding-right: 4px !important;
+        }
+
+        .col-center {
+          grid-column: span 6 / span 6 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: center !important;
+          justify-content: center !important;
+          position: relative !important;
+          overflow-y: auto !important;
+          background-color: var(--deep) !important;
+          border-radius: 12px !important;
+          border: 1px solid var(--steel) !important;
+          padding: 24px !important;
+        }
+
+        .col-right {
+          grid-column: span 3 / span 3 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 16px !important;
+          overflow-y: auto !important;
+          padding-left: 4px !important;
+        }
+
+        /* Show all sections inside columns on desktop regardless of active classes */
+        .col-left section, .col-right section {
+          display: block !important;
+        }
+
+        /* Set paddings for sections in dashboard grid */
+        #overview, #forest, #climate, #ocean, #air, #cta {
+          padding: 20px !important;
+          min-height: auto !important;
+          border-radius: 12px !important;
+          background-color: var(--deep) !important;
+          border: 1px solid var(--steel) !important;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        #hero {
+          padding: 0 !important;
+          min-height: auto !important;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          width: 100% !important;
+        }
+
+        /* overview card layout in column-left */
+        .cards-container {
+          display: flex !important;
+          flex-direction: column !important;
+          gap: 12px !important;
+        }
+
+        .card {
+          width: 100% !important;
+          padding: 16px !important;
+          opacity: 1 !important; /* Always visible in dashboard */
+          transform: none !important;
+        }
+
+        /* climate layout in right column */
+        .climate-grid {
+          grid-template-columns: 1fr !important;
+          gap: 20px !important;
+          margin-top: 16px !important;
+        }
+        
+        .bar-chart {
+          height: 120px !important;
+        }
+
+        /* ocean layout in right column */
+        .ocean-tiles {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 12px !important;
+        }
+        .ocean-tile {
+          padding: 12px 8px !important;
+        }
+        .ocean-waves-container {
+          height: 40px !important;
+          margin: 16px 0 !important;
+        }
+        .ocean-quote {
+          font-size: 13px !important;
+          margin-top: 16px !important;
+          line-height: 1.5 !important;
+          padding: 0 !important;
+        }
+
+        /* forest layout in left column */
+        .forest-grid {
+          grid-template-columns: 1fr !important;
+          gap: 16px !important;
+          margin-top: 16px !important;
+        }
+        .forest-big-val {
+          font-size: 32px !important;
+        }
+        .amazon-alert-container {
+          margin-top: 12px !important;
+          padding: 10px !important;
+        }
+
+        /* air quality layout in right column */
+        .air-container {
+          max-width: 100% !important;
+        }
+        .air-row {
+          grid-template-columns: 80px 1fr 100px !important;
+          gap: 12px !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        .section-sub {
+          margin-bottom: 16px !important;
+        }
+
+        /* cta layout in right column */
+        .cta-container {
+          max-width: 100% !important;
+        }
+        .cta-quote {
+          font-size: 18px !important;
+          margin-bottom: 8px !important;
+        }
+        .cta-sub {
+          font-size: 13px !important;
+          margin-bottom: 16px !important;
+        }
+        .share-btn {
+          padding: 8px 24px !important;
+          font-size: 13px !important;
+        }
+        .last-updated {
+          margin-top: 12px !important;
+        }
+
+        /* Ticker positioning in dashboard */
+        .ticker-wrap {
+          position: relative !important;
+          bottom: auto !important;
+          left: auto !important;
+          border-top: 1px solid rgba(226, 75, 74, 0.2) !important;
+          border-bottom: 1px solid rgba(226, 75, 74, 0.2) !important;
+          background: #1a0808 !important;
+          z-index: auto !important;
+        }
+
+        /* Hide section titles and subtitles that are redundant in compact mode, or style them elegantly */
+        .section-title {
+          font-size: 18px !important;
+          margin-bottom: 4px !important;
+        }
+        .section-sub {
+          font-size: 12px !important;
+          margin-bottom: 16px !important;
+        }
+
+        /* Thin scrollbar for scrollable columns */
+        .col-left::-webkit-scrollbar,
+        .col-right::-webkit-scrollbar {
+          width: 4px;
+        }
+        .col-left::-webkit-scrollbar-track,
+        .col-right::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .col-left::-webkit-scrollbar-thumb,
+        .col-right::-webkit-scrollbar-thumb {
+          background: var(--steel);
+          border-radius: 2px;
+        }
+        .col-left::-webkit-scrollbar-thumb:hover,
+        .col-right::-webkit-scrollbar-thumb:hover {
+          background: var(--teal);
+        }
+      }
+    </style>
+  </head>
+  
+  <body>
+    <!-- SECTION 1 — NAVBAR -->
+    <nav>
+      <div class="nav-container">
+        <div class="nav-left">
+          <div class="pulsing-dot"></div>
+          <a href="#hero" class="brand">VitalEarth</a>
+        </div>
+        
+        <div class="nav-center">
+          <a href="#overview">Overview</a>
+          <span class="nav-divider">&middot;</span>
+          <a href="#climate">Climate</a>
+          <span class="nav-divider">&middot;</span>
+          <a href="#ocean">Ocean</a>
+          <span class="nav-divider">&middot;</span>
+          <a href="#forest">Forest</a>
+          <span class="nav-divider">&middot;</span>
+          <a href="#air">Air</a>
+        </div>
+        
+        <div class="nav-right">
+          <div class="blinking-dot"></div>
+          <div id="live-clock" class="clock-text">Live &middot; 00:00:00 UTC</div>
+          <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle menu">☰</button>
+        </div>
+      </div>
+      
+      <!-- Mobile vertical dropdown menu -->
+      <div class="mobile-dropdown" id="mobile-dropdown">
+        <a href="#overview">Overview</a>
+        <a href="#climate">Climate</a>
+        <a href="#ocean">Ocean</a>
+        <a href="#forest">Forest</a>
+        <a href="#air">Air</a>
+      </div>
+    </nav>
+
+    <!-- MOBILE TABS NAVIGATION BAR -->
+    <div class="mobile-tabs-bar" id="mobile-tabs-bar">
+      <button class="mobile-tab-btn active" data-tab="hero">Global</button>
+      <button class="mobile-tab-btn" data-tab="overview">Overview</button>
+      <button class="mobile-tab-btn" data-tab="climate">Climate</button>
+      <button class="mobile-tab-btn" data-tab="ocean">Ocean</button>
+      <button class="mobile-tab-btn" data-tab="forest">Forest</button>
+      <button class="mobile-tab-btn" data-tab="air">Air</button>
+    </div>
+
+    <div class="dashboard-main">
+      <!-- COLUMN CENTER -->
+      <div class="col-center">
+        <!-- SECTION 2 — HERO -->
+        <section id="hero">
+      <div class="hero-quote-wrap">
+        <div class="hero-quote-1">"Earth is speaking."</div>
+        <div class="hero-quote-2">"Are you listening?"</div>
+      </div>
+      
+      <!-- EARTH GLOBE (pure CSS + SVG) -->
+      <div class="globe-container">
+        <div class="globe-rotate">
+          <svg class="globe-svg" width="280" height="280" viewBox="0 0 280 280">
+            <defs>
+              <clipPath id="earth-clip">
+                <circle cx="140" cy="140" r="140" />
+              </clipPath>
+            </defs>
+            <!-- Sea Background -->
+            <circle cx="140" cy="140" r="140" fill="#0C447C" />
+            
+            <!-- Landmass Shapes (Rough continents) -->
+            <g clip-path="url(#earth-clip)">
+              <!-- Americas -->
+              <path d="M 35,40 C 50,45 65,70 60,100 C 55,130 90,140 70,170 C 50,200 65,230 45,260 C 25,240 15,180 20,130 C 25,80 30,50 35,40 Z" fill="#1D9E75" />
+              <!-- Africa -->
+              <path d="M 120,95 C 150,85 185,100 175,135 C 165,170 180,185 155,210 C 130,235 115,200 115,170 C 115,140 100,110 120,95 Z" fill="#1D9E75" />
+              <!-- Eurasia / Asia -->
+              <path d="M 140,50 C 180,35 250,55 255,100 C 260,145 210,160 190,140 C 170,120 185,85 140,50 Z" fill="#1D9E75" />
+              <!-- Australia -->
+              <ellipse cx="225" cy="195" rx="25" ry="15" fill="#1D9E75" />
+              <!-- Antarctica -->
+              <path d="M 50,270 C 100,265 180,265 230,270 C 210,278 70,278 50,270 Z" fill="#1D9E75" />
+            </g>
+          </svg>
+        </div>
+        
+        <!-- Three Concentric Rings -->
+        <div class="ring-wrapper">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+        </div>
+      </div>
+      
+      <!-- Earth Health Score -->
+      <div class="health-score-container">
+        <div class="health-score-glow"></div>
+        <div>
+          <span class="score-number">38</span><span class="score-total">/100</span>
+        </div>
+        <div class="health-score-label">Critical — deteriorating fast</div>
+      </div>
+    </section>
+  </div> <!-- col-center -->
+
+  <!-- COLUMN LEFT -->
+  <div class="col-left">
+    <!-- SECTION 3 — VITAL STATS -->
+    <section id="overview" class="reveal-section">
+      <div class="cards-container">
+        <!-- CO2 Level -->
+        <div class="card" data-val="428.3" data-decimals="1" data-suffix=" ppm" data-prefix="" data-color="red">
+          <div class="card-label">CO₂ level</div>
+          <div class="card-value red">0.0 ppm</div>
+          <div class="card-sub">+3.2 this year</div>
+        </div>
+        <!-- Temp rise -->
+        <div class="card" data-val="1.4" data-decimals="1" data-suffix="°C" data-prefix="+" data-color="amber">
+          <div class="card-label">Temp rise</div>
+          <div class="card-value amber">0.0°C</div>
+          <div class="card-sub">vs pre-industrial</div>
+        </div>
+        <!-- Forest lost today -->
+        <div class="card" data-val="4218" data-decimals="0" data-suffix=" ha" data-prefix="" data-color="red">
+          <div class="card-label">Forest lost today</div>
+          <div class="card-value red">0 ha</div>
+          <div class="card-sub">5,900 football fields</div>
+        </div>
+        <!-- Sea level rise -->
+        <div class="card" data-val="3.7" data-decimals="1" data-suffix=" mm/yr" data-prefix="+" data-color="amber">
+          <div class="card-label">Sea level rise</div>
+          <div class="card-value amber">0.0 mm/yr</div>
+          <div class="card-sub">accelerating</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6 — FOREST HEARTBEAT -->
+    <section id="forest" class="reveal-section">
+      <h2 class="section-title text-pale-green">Forest heartbeat</h2>
+      <p class="section-sub">Deforestation monitoring & global tree canopy balance</p>
+      
+      <div class="forest-grid">
+        <!-- Left Side — Donut Chart -->
+        <div class="forest-col donut-container">
+          <svg class="donut-svg" width="200" height="200" viewBox="0 0 200 200">
+            <!-- Rotated -90deg so the circles start from the very top (12 o'clock) -->
+            <g transform="rotate(-90 100 100)">
+              <!-- Red arc (31%) -->
+              <circle class="donut-ring donut-red" cx="100" cy="100" r="80" stroke="#E24B4A" stroke-width="24" fill="transparent" />
+              <!-- Green arc (69%) -->
+              <circle class="donut-ring donut-green" cx="100" cy="100" r="80" stroke="#1D9E75" stroke-width="24" fill="transparent" />
+            </g>
+            <text x="100" y="105" text-anchor="middle" fill="#FFFFFF" font-size="28" font-weight="600">69%</text>
+            <text x="100" y="125" text-anchor="middle" fill="var(--teal-mid)" font-size="12" font-weight="500">remaining</text>
+          </svg>
+        </div>
+        
+        <!-- Right Side — Stats Block -->
+        <div class="forest-col stats-block">
+          <div class="forest-big-val">4,218 ha</div>
+          <div class="forest-stat-sub red-text">lost today</div>
+          <div class="forest-desc">&middot; 3 trees every second</div>
+          <div class="forest-desc">&middot; 5,900 football fields</div>
+          
+          <!-- Amazon rainforest alert bar -->
+          <div class="amazon-alert-container">
+            <div class="amazon-alert-header">
+              <span>Amazon Rainforest Alert</span>
+              <span class="critical-badge">Critical</span>
+            </div>
+            <div class="amazon-alert-track">
+              <div class="amazon-alert-fill" style="--w: 81%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div> <!-- col-left -->
+
+  <!-- COLUMN RIGHT -->
+  <div class="col-right">
+    <!-- SECTION 4 — CLIMATE -->
+    <section id="climate" class="reveal-section">
+      <h2 class="section-title">Climate pulse <span class="heart">❤</span></h2>
+      <p class="section-sub">Carbon concentration & warming velocity baseline trackers</p>
+      
+      <div class="climate-grid">
+        <!-- Left Side — Bar Chart -->
+        <div class="climate-col">
+          <div class="chart-container">
+            <div class="bar-chart">
+              <div class="bar-wrapper">
+                <div class="bar bar-1" style="--h: 74.0%;"></div>
+                <div class="bar-label">1960</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-2" style="--h: 75.9%;"></div>
+                <div class="bar-label">1970</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-3" style="--h: 78.2%;"></div>
+                <div class="bar-label">1980</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-4" style="--h: 82.7%;"></div>
+                <div class="bar-label">1990</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-5" style="--h: 86.2%;"></div>
+                <div class="bar-label">2000</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-6" style="--h: 90.6%;"></div>
+                <div class="bar-label">2010</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="bar bar-7" style="--h: 96.2%;"></div>
+                <div class="bar-label">2020</div>
+              </div>
+              <div class="bar-wrapper">
+                <div class="record-badge">RECORD</div>
+                <div class="bar bar-8" style="--h: 100.0%;"></div>
+                <div class="bar-label" style="color: var(--red); font-weight: 600;">2026</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Side — Progress Bars -->
+        <div class="climate-col">
+          <div class="progress-section">
+            <!-- Progress bar 1 -->
+            <div class="progress-item">
+              <div class="progress-info">
+                <span class="progress-label">Temperature anomaly</span>
+                <span class="progress-value">+1.4°C / 2.0°C limit</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill prog-1" style="--w: 70%;"></div>
+              </div>
+            </div>
+            
+            <!-- Progress bar 2 -->
+            <div class="progress-item" style="margin-top: 36px;">
+              <div class="progress-info">
+                <span class="progress-label">Arctic ice remaining</span>
+                <span class="progress-value">72% remaining</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill prog-2" style="--w: 72%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 — OCEAN SOUL -->
+    <section id="ocean" class="reveal-section">
+      <div class="ocean-header">
+        <h2 class="section-title text-pale-green" style="color: var(--teal-mid);">Ocean soul</h2>
+        <p class="section-sub">The ocean covers 71% of Earth. It is crying.</p>
+      </div>
+      
+      <!-- Wave Layer SVG -->
+      <div class="ocean-waves-container">
+        <svg class="wave-svg" viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <!-- Wave Paths (Duplicated side by side for seamless horizontal translating) -->
+          <path class="wave-path wave-1" d="M0,60 C80,20 160,100 240,60 C320,20 400,100 480,60 C560,20 640,100 720,60 C800,20 880,100 960,60 C1040,20 1120,100 1200,60 C1280,20 1360,100 1440,60 C1520,20 1600,100 1680,60 C1760,20 1840,100 1920,60 C2000,20 2080,100 2160,60 C2240,20 2320,100 2400,60 C2480,20 2560,100 2640,60 C2720,20 2800,100 2880,60" />
+          <path class="wave-path wave-2" d="M0,60 C80,20 160,100 240,60 C320,20 400,100 480,60 C560,20 640,100 720,60 C800,20 880,100 960,60 C1040,20 1120,100 1200,60 C1280,20 1360,100 1440,60 C1520,20 1600,100 1680,60 C1760,20 1840,100 1920,60 C2000,20 2080,100 2160,60 C2240,20 2320,100 2400,60 C2480,20 2560,100 2640,60 C2720,20 2800,100 2880,60" />
+          <path class="wave-path wave-3" d="M0,60 C80,20 160,100 240,60 C320,20 400,100 480,60 C560,20 640,100 720,60 C800,20 880,100 960,60 C1040,20 1120,100 1200,60 C1280,20 1360,100 1440,60 C1520,20 1600,100 1680,60 C1760,20 1840,100 1920,60 C2000,20 2080,100 2160,60 C2240,20 2320,100 2400,60 C2480,20 2560,100 2640,60 C2720,20 2800,100 2880,60" />
+        </svg>
+      </div>
+      
+      <!-- Four Metric Tiles -->
+      <div class="ocean-tiles-container">
+        <div class="ocean-tiles">
+          <div class="ocean-tile">
+            <div class="tile-label">Ocean temp</div>
+            <div class="tile-value red">+0.9°C warmer</div>
+          </div>
+          <div class="ocean-tile">
+            <div class="tile-label">Coral bleaching</div>
+            <div class="tile-value red">58% bleached</div>
+          </div>
+          <div class="ocean-tile">
+            <div class="tile-label">Acidity pH</div>
+            <div class="tile-value red">8.08 — falling</div>
+          </div>
+          <div class="ocean-tile">
+            <div class="tile-label">Plastic index</div>
+            <div class="tile-value amber">High</div>
+          </div>
+        </div>
+        
+        <!-- Quote Block -->
+        <div class="ocean-quote reveal-section">
+          "Every second, 8 tonnes of plastic enter the ocean.<br>
+          Every year, coral reefs shrink by 1,500 km².<br>
+          The ocean remembers everything we forget."
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7 — AIR QUALITY -->
+    <section id="air" class="reveal-section">
+      <div class="air-container">
+        <h2 class="section-title dark-text">Air quality right now</h2>
+        <p class="section-sub dark-muted">Breathing data, updated every hour</p>
+        
+        <div class="air-rows">
+          <!-- Delhi -->
+          <div class="air-row" style="transition-delay: 0s;">
+            <div class="city-name">Delhi</div>
+            <div class="aqi-bar-container">
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" style="--w: 95.6%; background-color: #E24B4A;"></div>
+              </div>
+            </div>
+            <div class="status-wrap">
+              <span class="aqi-badge" style="background-color: #E24B4A;">287</span>
+              <span class="aqi-status" style="color: #E24B4A;">Hazardous</span>
+            </div>
+          </div>
+          
+          <!-- Beijing -->
+          <div class="air-row" style="transition-delay: 0.1s;">
+            <div class="city-name">Beijing</div>
+            <div class="aqi-bar-container">
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" style="--w: 67%; background-color: #E24B4A;"></div>
+              </div>
+            </div>
+            <div class="status-wrap">
+              <span class="aqi-badge" style="background-color: #E24B4A;">201</span>
+              <span class="aqi-status" style="color: #E24B4A;">Very poor</span>
+            </div>
+          </div>
+          
+          <!-- Mumbai -->
+          <div class="air-row" style="transition-delay: 0.2s;">
+            <div class="city-name">Mumbai</div>
+            <div class="aqi-bar-container">
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" style="--w: 47.3%; background-color: #EF9F27;"></div>
+              </div>
+            </div>
+            <div class="status-wrap">
+              <span class="aqi-badge" style="background-color: #EF9F27; color: #010f1a;">142</span>
+              <span class="aqi-status" style="color: #EF9F27;">Unhealthy</span>
+            </div>
+          </div>
+          
+          <!-- London -->
+          <div class="air-row" style="transition-delay: 0.3s;">
+            <div class="city-name">London</div>
+            <div class="aqi-bar-container">
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" style="--w: 14%; background-color: #1D9E75;"></div>
+              </div>
+            </div>
+            <div class="status-wrap">
+              <span class="aqi-badge" style="background-color: #1D9E75;">42</span>
+              <span class="aqi-status" style="color: #1D9E75;">Good</span>
+            </div>
+          </div>
+          
+          <!-- New York -->
+          <div class="air-row" style="transition-delay: 0.4s;">
+            <div class="city-name">New York</div>
+            <div class="aqi-bar-container">
+              <div class="aqi-bar-track">
+                <div class="aqi-bar-fill" style="--w: 12.7%; background-color: #1D9E75;"></div>
+              </div>
+            </div>
+            <div class="status-wrap">
+              <span class="aqi-badge" style="background-color: #1D9E75;">38</span>
+              <span class="aqi-status" style="color: #1D9E75;">Good</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8 — CALL TO ACTION -->
+    <section id="cta" class="reveal-section">
+      <div class="cta-container">
+        <div class="cta-quote">"Tomorrow's Earth depends on today's choices."</div>
+        <div class="cta-sub">Every data point on this dashboard is a distress signal.</div>
+        
+        <button class="share-btn" id="share-btn">Share VitalEarth</button>
+        <div class="last-updated" id="last-updated-text">Last updated 0 seconds ago</div>
+      </div>
+    </section>
+  </div> <!-- col-right -->
+</div> <!-- dashboard-main -->
+
+<!-- GLOBAL TICKER STRIP -->
+<div class="ticker-wrap">
+  <div class="ticker-content">
+    <span>&nbsp;&nbsp;⚠ CO₂ hits record 428 ppm &middot; Amazon lost 4,200 ha in 24 hrs &middot; 3 species extinct today &middot; Ocean pH lowest ever recorded &middot; Arctic ice 28% below 1980s baseline &middot; Sea level rising 3.7mm/yr &middot;</span>
+    <span>&nbsp;&nbsp;⚠ CO₂ hits record 428 ppm &middot; Amazon lost 4,200 ha in 24 hrs &middot; 3 species extinct today &middot; Ocean pH lowest ever recorded &middot; Arctic ice 28% below 1980s baseline &middot; Sea level rising 3.7mm/yr &middot;</span>
+  </div>
+</div>
+
+<!-- SECTION 9 — FOOTER -->
+<footer>
+      <div class="footer-container">
+        <div class="footer-left">
+          Data: NASA &middot; NOAA &middot; Global Forest Watch &middot; OpenAQ &middot; IPCC 2026
+        </div>
+        <div class="footer-right">
+          Earth needs you now.
+        </div>
+      </div>
+    </footer>
+
+    <!-- FLOATING PRESENT MODE BUTTON -->
+    <button class="present-btn" id="present-btn">▶ Present</button>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // 1. LIVE UTC CLOCK
+        const liveClock = document.getElementById('live-clock');
+        function updateClock() {
+          const now = new Date();
+          const hours = String(now.getUTCHours()).padStart(2, '0');
+          const minutes = String(now.getUTCMinutes()).padStart(2, '0');
+          const seconds = String(now.getUTCSeconds()).padStart(2, '0');
+          liveClock.innerHTML = `Live &middot; ${hours}:${minutes}:${seconds} UTC`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 2. MOBILE HAMBURGER DROPDOWN & SINGLE PAGE DASHBOARD NAVIGATION
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileDropdown = document.getElementById('mobile-dropdown');
+        
+        hamburgerBtn.addEventListener('click', () => {
+          mobileDropdown.classList.toggle('open');
+        });
+        
+        // Close dropdown when clicking link
+        mobileDropdown.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => {
+            mobileDropdown.classList.remove('open');
+          });
+        });
+
+        // ==========================================
+        // SINGLE PAGE DASHBOARD INTERACTIVE NAVIGATION
+        // ==========================================
+        
+        const mobileTabsBar = document.getElementById('mobile-tabs-bar');
+        const mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+        const colCenter = document.querySelector('.col-center');
+        const colLeft = document.querySelector('.col-left');
+        const colRight = document.querySelector('.col-right');
+        
+        // Define tab routing mapping
+        const tabMapping = {
+          'hero': { col: colCenter, sec: document.getElementById('hero') },
+          'overview': { col: colLeft, sec: document.getElementById('overview') },
+          'forest': { col: colLeft, sec: document.getElementById('forest') },
+          'climate': { col: colRight, sec: document.getElementById('climate') },
+          'ocean': { col: colRight, sec: document.getElementById('ocean') },
+          'air': { col: colRight, sec: document.getElementById('air') }
+        };
+
+        // Function to switch active tab on mobile
+        function switchMobileTab(tabId) {
+          if (!tabMapping[tabId]) return;
+          
+          // Update tab buttons active state
+          mobileTabBtns.forEach(btn => {
+            if (btn.getAttribute('data-tab') === tabId) {
+              btn.classList.add('active');
+              // Smoothly scroll the tab bar so the active tab is visible
+              btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+              btn.classList.remove('active');
+            }
+          });
+
+          // Update column and section active states
+          Object.keys(tabMapping).forEach(key => {
+            const item = tabMapping[key];
+            if (key === tabId) {
+              item.col.classList.add('active');
+              item.sec.classList.add('active-section');
+              item.sec.classList.add('visible'); // Trigger animations instantly when view is shown!
+              
+              // If we are looking at Forest, trigger leaf generator
+              if (key === 'forest') {
+                item.sec.querySelectorAll('.leaf').forEach(leaf => leaf.classList.add('active'));
+              }
+              
+              // Scroll the column view to the top
+              item.col.scrollTop = 0;
+            } else {
+              item.sec.classList.remove('active-section');
+            }
+          });
+          
+          // Manage column visibility (mobile is 1-column)
+          const targetCol = tabMapping[tabId].col;
+          [colCenter, colLeft, colRight].forEach(col => {
+            if (col === targetCol) {
+              col.classList.add('active');
+            } else {
+              col.classList.remove('active');
+            }
+          });
+        }
+
+        // Initialize mobile view with center/global tab
+        if (window.innerWidth < 1024) {
+          switchMobileTab('hero');
+        }
+
+        // Mobile Tab buttons click listener
+        mobileTabBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            switchMobileTab(tabId);
+          });
+        });
+
+        // Desktop and Mobile Unified Nav Link Clicking
+        const allNavLinks = document.querySelectorAll('.nav-center a, .mobile-dropdown a, .brand');
+        allNavLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if (!href.startsWith('#')) return;
+            
+            e.preventDefault();
+            const targetId = href.substring(1); // 'overview', 'climate', etc.
+            
+            if (window.innerWidth < 1024) {
+              // MOBILE MODE: Switch tabs programmatically
+              if (targetId === 'hero') {
+                switchMobileTab('hero');
+              } else {
+                switchMobileTab(targetId);
+              }
+              
+              // Close mobile dropdown menu if open
+              mobileDropdown.classList.remove('open');
+            } else {
+              // DESKTOP MODE: Scroll inside scrollable column smoothly
+              const section = document.getElementById(targetId);
+              if (!section) return;
+              
+              // Find which column contains this section
+              const parentColumn = section.closest('.col-left, .col-center, .col-right');
+              if (parentColumn) {
+                // Smooth scroll inside parent scrollable column
+                parentColumn.scrollTo({
+                  top: section.offsetTop - parentColumn.offsetTop,
+                  behavior: 'smooth'
+                });
+                
+                // Set visible/animation class
+                section.classList.add('visible');
+              }
+            }
+          });
+        });
+
+        // Setup scroll observer on desktop to highlight active nav link
+        if (window.innerWidth >= 1024) {
+          const desktopObserverOptions = {
+            root: null,
+            rootMargin: '-20% 0px -50% 0px',
+            threshold: 0.1
+          };
+          
+          const desktopObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                // Remove active classes from nav items, except when it matches
+                document.querySelectorAll('.nav-center a').forEach(a => {
+                  if (a.getAttribute('href') === `#${id}`) {
+                    a.style.color = 'var(--teal-pale)';
+                    a.style.textShadow = '0 0 10px rgba(93, 202, 165, 0.4)';
+                  } else {
+                    a.style.color = '';
+                    a.style.textShadow = '';
+                  }
+                });
+              }
+            });
+          }, desktopObserverOptions);
+
+          document.querySelectorAll('section').forEach(sec => {
+            if (sec.id !== 'hero' && sec.id !== 'cta') {
+              desktopObserver.observe(sec);
+            }
+          });
+        }
+
+        // 3. COUNT-UP ANIMATION FOR VITAL STATS
+        function countUp(el, start, end, duration, formatFn) {
+          const startTime = performance.now();
+          function update(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // easeOutQuart easing
+            const ease = 1 - Math.pow(1 - progress, 4);
+            const current = start + (end - start) * ease;
+            el.textContent = formatFn(current);
+            if (progress < 1) {
+              requestAnimationFrame(update);
+            } else {
+              el.textContent = formatFn(end);
+            }
+          }
+          requestAnimationFrame(update);
+        }
+
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+          const valEl = card.querySelector('.card-value');
+          const targetVal = parseFloat(card.getAttribute('data-val'));
+          const decimals = parseInt(card.getAttribute('data-decimals') || '0');
+          const prefix = card.getAttribute('data-prefix') || '';
+          const suffix = card.getAttribute('data-suffix') || '';
+          
+          const format = (v) => {
+            let formatted = v.toFixed(decimals);
+            if (decimals === 0) {
+              formatted = Math.round(v).toLocaleString();
+            }
+            return `${prefix}${formatted}${suffix}`;
+          };
+          
+          // Animate on load as requested
+          countUp(valEl, 0, targetVal, 2000, format);
+        });
+
+        // 4. INTERSECTION OBSERVER FOR SCROLL ENTRY
+        const observerOptions = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.15
+        };
+
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target); // Trigger once only
+            }
+          });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-section').forEach(sec => {
+          revealObserver.observe(sec);
+        });
+
+        // 5. DYNAMIC LEAVES GENERATOR
+        const forestSec = document.getElementById('forest');
+        for (let i = 0; i < 10; i++) {
+          const leaf = document.createElement('div');
+          leaf.className = 'leaf';
+          leaf.style.left = `${5 + Math.random() * 90}%`;
+          leaf.style.animationDelay = `${Math.random() * 8}s`;
+          leaf.style.animationDuration = `${6 + Math.random() * 6}s`;
+          forestSec.appendChild(leaf);
+        }
+
+        // 6. LAST UPDATED COUNTER
+        let secondsAgo = 0;
+        const lastUpdatedText = document.getElementById('last-updated-text');
+        setInterval(() => {
+          secondsAgo++;
+          lastUpdatedText.textContent = `Last updated ${secondsAgo} second${secondsAgo === 1 ? '' : 's'} ago`;
+        }, 1000);
+
+        // 7. SHARE BUTTON ACTION
+        const shareBtn = document.getElementById('share-btn');
+        shareBtn.addEventListener('click', () => {
+          if (navigator.share) {
+            navigator.share({
+              title: 'VitalEarth',
+              text: "Earth's vital signs. Live.",
+              url: window.location.href,
+            }).catch(console.error);
+          } else {
+            // Copy link backup
+            navigator.clipboard.writeText(window.location.href)
+              .then(() => {
+                showToast('Link copied to clipboard!');
+              })
+              .catch(err => {
+                alert('Failed to copy link: ' + err);
+              });
+          }
+        });
+
+        // TOAST FEEDBACK UTILITY
+        function showToast(message) {
+          const toast = document.createElement('div');
+          toast.className = 'toast';
+          toast.textContent = message;
+          document.body.appendChild(toast);
+          setTimeout(() => {
+            toast.classList.add('visible');
+          }, 10);
+          setTimeout(() => {
+            toast.classList.remove('visible');
+            setTimeout(() => {
+              toast.remove();
+            }, 300);
+          }, 3000);
+        }
+
+        // 8. FLOATING PRESENT MODE
+        const presentBtn = document.getElementById('present-btn');
+        const navbar = document.querySelector('nav');
+        const sectionsList = ['hero', 'overview', 'climate', 'ocean', 'forest', 'air', 'cta'];
+        let presentInterval = null;
+        let currentPresentIndex = 0;
+
+        presentBtn.addEventListener('click', () => {
+          if (presentInterval === null) {
+            // Start Present Mode
+            presentBtn.textContent = '■ Stop';
+            presentBtn.classList.add('active');
+            navbar.classList.add('navbar-hidden');
+            showToast('Present mode active. Auto-scrolling dashboard.');
+            
+            currentPresentIndex = 0;
+            document.getElementById(sectionsList[currentPresentIndex]).scrollIntoView({ behavior: 'smooth' });
+            
+            presentInterval = setInterval(() => {
+              currentPresentIndex = (currentPresentIndex + 1) % sectionsList.length;
+              const nextSec = document.getElementById(sectionsList[currentPresentIndex]);
+              if (nextSec) {
+                nextSec.scrollIntoView({ behavior: 'smooth' });
+              }
+            }, 5000);
+          } else {
+            stopPresentMode();
+          }
+        });
+
+        function stopPresentMode() {
+          if (presentInterval !== null) {
+            clearInterval(presentInterval);
+            presentInterval = null;
+            presentBtn.textContent = '▶ Present';
+            presentBtn.classList.remove('active');
+            navbar.classList.remove('navbar-hidden');
+            showToast('Present mode stopped.');
+          }
+        }
+
+        // Cancel present mode if user scrolls manually
+        const handleManualScroll = () => {
+          if (presentInterval !== null) {
+            stopPresentMode();
+          }
+        };
+        window.addEventListener('wheel', handleManualScroll, { passive: true });
+        window.addEventListener('touchmove', handleManualScroll, { passive: true });
+      });
+    </script>
+  </body>
+</html>
