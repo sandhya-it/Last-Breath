@@ -205,7 +205,7 @@ Contributions and suggestions are welcome.
 
 
 ## 📄 License
-
+This project is intended for educational, research, and prototype purposes.
 
 
 ## 🔗 Demo Links
